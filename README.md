@@ -34,7 +34,7 @@ metadata:
 spec:
   valuesContent: |-
     ports:
-      buydpi:
+      byedpi:
         port: 1080
         expose: true
         exposedPort: 1080
