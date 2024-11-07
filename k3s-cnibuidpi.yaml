@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: buydpi
+  labels:
+    app: buydpi
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  buydpi
+  namespace: buydpi
+  labels:
+    name:  buydpi
+spec:
+  template:
+    metadata:
+      labels:
+        name:  buydpi
+    spec:
+      containers:
+      - image:  registry.home.local/buydpi:latest
+        name:  buydpi
+
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256M"
+
+        livenessProbe:
+          exec:
+            command:
+             - curl
+             - -Ss 
+             - --socks5 
+             - 127.0.0.1:1080 
+             - --connect-timeout
+             - 100
+             - --max-time
+             - 119
+             - https://ifconfig.co
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #      - curl
+        #      - -Ss 
+        #      - --socks5 
+        #      - 127.0.0.1:1080 
+        #      - --connect-timeout
+        #      - 100
+        #      - --max-time
+        #      - 119
+        #      - https://ifconfig.co
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 30
+          
+        ports:
+        - containerPort:  1080
+          name:  buydpi
+      restartPolicy: Always
+      imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: buydpi
+  namespace: buydpi
+spec:
+  selector:
+    app: buydpi
+  type: ClusterIP
+  ports:
+  - name: buydpi
+    protocol: TCP
+    port: 1080
+    targetPort: 1080 
+
+---
+
