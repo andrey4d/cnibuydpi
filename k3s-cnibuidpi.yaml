@@ -7,69 +7,56 @@ metadata:
     app: buydpi
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  buydpi
   namespace: buydpi
   labels:
     name:  buydpi
-spec:
+spec:    
+  selector:
+    matchLabels:
+      app: buydpi
   template:
     metadata:
       labels:
-        name:  buydpi
+        app: buydpi
+
     spec:
       containers:
       - image:  registry.home.local/buydpi:latest
-        name:  buydpi
+        imagePullPolicy: Always
+        name: buydpi
 
         resources:
           requests:
-            cpu: "200m"
-            memory: "256M"
-
+            cpu: 200m
+            memory: 128M
+          limits:
+            memory: 256Mi
+            cpu: 500m
         livenessProbe:
-          exec:
-            command:
-             - curl
-             - -Ss 
-             - --socks5 
-             - 127.0.0.1:1080 
-             - --connect-timeout
-             - 100
-             - --max-time
-             - 119
-             - https://ifconfig.co
-          initialDelaySeconds: 30
-          timeoutSeconds: 30
+          tcpSocket:
+            port: 1080
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
 
-        # readinessProbe:
-        #   exec:
-        #     command:
-        #      - curl
-        #      - -Ss 
-        #      - --socks5 
-        #      - 127.0.0.1:1080 
-        #      - --connect-timeout
-        #      - 100
-        #      - --max-time
-        #      - 119
-        #      - https://ifconfig.co
-        #   initialDelaySeconds: 30
-        #   timeoutSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 1080
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
           
         ports:
         - containerPort:  1080
           name:  buydpi
-      restartPolicy: Always
-      imagePullPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: buydpi
+  name: buydpi-service-tcp
   namespace: buydpi
 spec:
   selector:
@@ -79,7 +66,18 @@ spec:
   - name: buydpi
     protocol: TCP
     port: 1080
-    targetPort: 1080 
+    targetPort: 1080
 
 ---
-
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: buydpi-ingress-route-tcp
+  namespace: buydpi
+spec:
+  entryPoints: [buydpi]
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: buydpi-service-tcp
+          port: 1080
