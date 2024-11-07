@@ -1,0 +1,23 @@
+services:
+  buydpi:
+    build:
+      context: build
+      dockerfile: Dockerfile
+      args:
+        URL: https://github.com/hufrea/byedpi/releases/download/v0.15/byedpi-15-x86_64.tar.gz
+    image: buydpi
+    ports:
+      - 1080:1080
+    command:
+      - /opt/dpi/ciadpi
+      - --hosts
+      - /opt/dpi/hosts
+      - -s1
+      - -q1
+      - -Y
+      - -At
+      - -f-1
+      - -r1+s
+      - -As
+      - -o1
+    restart: unless-stopped
