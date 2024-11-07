@@ -22,7 +22,7 @@ docker compose down
 
 ## k3s manifest apply
 ```shell
-kubectl apply -f k3s-k3s-cnibuydpi.yaml
+kubectl apply -f k3s-k3s-cnibyedpi.yaml
 ```
 ## Config traefik ingress entrypoint
 ```yaml
