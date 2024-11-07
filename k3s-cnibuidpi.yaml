@@ -51,6 +51,18 @@ spec:
         ports:
         - containerPort:  1080
           name:  buydpi
+        command:
+          - /opt/dpi/ciadpi
+          - --hosts
+          - /opt/dpi/hosts
+          - -s1
+          - -q1
+          - -Y
+          - -At
+          - -f-1
+          - -r1+s
+          - -As
+          - -o1
 
 ---
 apiVersion: v1
