@@ -1,4 +1,6 @@
-## Buil and Run
+# ByeDPI 
+[https://github.com/hufrea/byedpi](https://github.com/hufrea/byedpi)
+## Build and Run
 ```shell
 docker compose up -d --force-recreate --build
 ```
@@ -20,7 +22,7 @@ docker compose down
 
 ## k3s manifest apply
 ```shell
-kubectl apply -f k3s-cnibuidpi.yaml
+kubectl apply -f k3s-k3s-cnibuydpi.yaml
 ```
 ## Config traefik ingress entrypoint
 ```yaml
